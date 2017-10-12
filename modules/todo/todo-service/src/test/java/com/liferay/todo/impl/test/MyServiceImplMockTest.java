@@ -1,7 +1,6 @@
 package com.liferay.todo.impl.test;
 
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.liferay.todo.impl.MyServiceImpl;
 import com.liferay.todo.model.Todo;

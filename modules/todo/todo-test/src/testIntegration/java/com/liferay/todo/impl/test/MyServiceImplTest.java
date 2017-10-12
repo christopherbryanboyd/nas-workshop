@@ -71,8 +71,6 @@ public class MyServiceImplTest {
 
 		myService.complete(todo);
 
-		todo = _persistence.findByPrimaryKey(todo.getPrimaryKey());
-
 		Assert.assertTrue(todo.getCompleted());
 	}
 

@@ -6,6 +6,7 @@ dependencies {
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":modules:todo:todo-api")
 
+	testCompile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.6.0"
 	testCompile group: "junit", name: "junit", version: "4.12"
 	testCompile project(":modules:todo:todo-api")
 }
