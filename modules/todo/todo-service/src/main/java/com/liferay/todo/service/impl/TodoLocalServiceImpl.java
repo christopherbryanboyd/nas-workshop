@@ -14,6 +14,9 @@
 
 package com.liferay.todo.service.impl;
 
+import java.util.List;
+
+import com.liferay.todo.model.Todo;
 import com.liferay.todo.service.base.TodoLocalServiceBaseImpl;
 
 /**
@@ -36,4 +39,11 @@ public class TodoLocalServiceImpl extends TodoLocalServiceBaseImpl {
 	 *
 	 * Never reference this class directly. Always use {@link com.liferay.todo.service.TodoLocalServiceUtil} to access the todo local service.
 	 */
+
+	public Todo whatIsBestNext() {
+		List<Todo> todos = todoPersistence.findAll();
+
+		return todos.stream().sorted((t1, t2) -> t1.getCreateDate().compareTo(t2.getCreateDate())).findFirst().orElse(null);
+	}
+
 }

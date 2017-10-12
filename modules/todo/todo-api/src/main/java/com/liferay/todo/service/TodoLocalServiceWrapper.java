@@ -175,6 +175,11 @@ public class TodoLocalServiceWrapper implements TodoLocalService,
 		return _todoLocalService.updateTodo(todo);
 	}
 
+	@Override
+	public com.liferay.todo.model.Todo whatIsBestNext() {
+		return _todoLocalService.whatIsBestNext();
+	}
+
 	/**
 	* Returns the number of todos.
 	*

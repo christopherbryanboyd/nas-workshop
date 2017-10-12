@@ -170,6 +170,10 @@ public class TodoLocalServiceUtil {
 		return getService().updateTodo(todo);
 	}
 
+	public static com.liferay.todo.model.Todo whatIsBestNext() {
+		return getService().whatIsBestNext();
+	}
+
 	/**
 	* Returns the number of todos.
 	*

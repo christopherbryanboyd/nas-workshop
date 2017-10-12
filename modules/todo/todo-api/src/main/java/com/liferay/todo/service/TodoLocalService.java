@@ -167,6 +167,8 @@ public interface TodoLocalService extends BaseLocalService,
 	@Indexable(type = IndexableType.REINDEX)
 	public Todo updateTodo(Todo todo);
 
+	public Todo whatIsBestNext();
+
 	/**
 	* Returns the number of todos.
 	*
