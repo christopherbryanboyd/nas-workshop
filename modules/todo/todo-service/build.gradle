@@ -5,6 +5,9 @@ dependencies {
 	compileOnly group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "2.6.0"
 	compileOnly group: "org.osgi", name: "osgi.core", version: "6.0.0"
 	compileOnly project(":modules:todo:todo-api")
+
+	testCompile group: "junit", name: "junit", version: "4.12"
+	testCompile project(":modules:todo:todo-api")
 }
 
 buildService {
