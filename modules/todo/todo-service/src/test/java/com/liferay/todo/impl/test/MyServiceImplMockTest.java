@@ -53,7 +53,7 @@ public class MyServiceImplMockTest {
 			})
 			.atLeastOnce();
 		
-		expect(todo.getCompleted())
+		expect(todo.isCompleted())
 			.andAnswer(() -> completed.get())
 			.atLeastOnce();
 		
@@ -70,7 +70,7 @@ public class MyServiceImplMockTest {
 				.andVoid()
 				.once();
 			
-			expect(todo.getCompleted())
+			expect(todo.isCompleted())
 				.andReturn(Boolean.TRUE)
 				.once();
 			
@@ -129,7 +129,7 @@ public class MyServiceImplMockTest {
 
 		myServiceImpl.complete(todo);
 		
-		assertTrue(todo.getCompleted());
+		assertTrue(todo.isCompleted());
 		
 		/**
 		 * This verifies all the expectations we built
@@ -143,7 +143,7 @@ public class MyServiceImplMockTest {
 
 		myServiceImpl.stillNeedsWork(todo);
 		
-		assertFalse(todo.getCompleted());
+		assertFalse(todo.isCompleted());
 		
 		/**
 		 * This verifies all the expectations we built
