@@ -8,6 +8,9 @@ import org.powermock.reflect.Whitebox;
 
 import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.easymock.IAnswer;
 
 import com.liferay.todo.impl.MyServiceImpl;
@@ -30,44 +33,98 @@ public class MyServiceImplMockTest {
 	{
 		todo = mock(Todo.class);
 		
-		todo.setCompleted(Boolean.TRUE);
+		/**
+		 * Used as a placeholder for the completed state,
+		 * since {@link Todo} is an interface and holds no state.
+		 */
+		AtomicBoolean completed = new AtomicBoolean(Boolean.FALSE);
 		
-		expectLastCall().andVoid().once();
+		todo.setCompleted(anyBoolean());
 		
-		expect(todo.getCompleted()).andReturn(Boolean.TRUE).once();
+		expectLastCall().andAnswer(() ->
+			{
+				boolean parm = (boolean) getCurrentArguments()[0];
+				// Store the state for later.
+				completed.set(parm);
+				
+				/**
+				 * Return null because 
+				 * {@link Todo#setCompleted(boolean}
+				 * does not return anything.
+				 */
+				return null;
+			})
+			.atLeastOnce();
+		
+		expect(todo.getCompleted())
+			.andAnswer(() -> completed.get())
+			.atLeastOnce();
 		
 		replay(todo);
+		
+		/*	
+		 	// MORE STRICT VERSION
+		 
+			todo = strictMock(Todo.class);
+			
+			todo.setCompleted(Boolean.TRUE);
+			
+			expectLastCall()
+				.andVoid()
+				.once();
+			
+			expect(todo.getCompleted())
+				.andReturn(Boolean.TRUE)
+				.once();
+			
+			replay(todo);
+		*/
 	}
 	
 	private void mockTodoLocalService()
 	{
 		todoLocalService = mock(TodoLocalService.class);
 		
-		expect(todoLocalService.updateTodo(isA(Todo.class))).andAnswer(new IAnswer<Todo>() {
-
-			@Override
-			public Todo answer() throws Throwable {
+		expect(todoLocalService.updateTodo(isA(Todo.class)))
+			.andAnswer(() ->
+			{
+				/**
+				 * Normally this is used to save the 
+				 * {@link Todo} object.
+				 * For our test, we'll just verify
+				 * it is completed as expected.
+				 */
 				Todo todo = (Todo) getCurrentArguments()[0];
 				
 				assertTrue(todo.getCompleted());
 				
 				return todo;
-
-			}
-		}).once();
+	
+			})
+			.once();
 		
 		replay(todoLocalService);
 	}
 	
 	private void mockMyServiceImpl() 
 	{
-		myServiceImpl = mock(MyServiceImpl.class);
+		myServiceImpl = partialMockBuilder(MyServiceImpl.class)
+			.createMock();
 		
+		/**
+		 * Set the field in {@link MyServiceImpl}
+		 * because OSGi isn't available to do it for us.
+		 */
 		Whitebox.setInternalState(myServiceImpl, "todoService", todoLocalService);
-
-		myServiceImpl.stillNeedsWork(isA(Todo.class));
 		
-		expectLastCall().andVoid().once();
+		/*
+		 	// Commented out because this is the code we're testing.
+		 	 
+		 	myServiceImpl.stillNeedsWork(isA(Todo.class));
+		
+			expectLastCall().andVoid().once();
+			
+		*/
 		
 		replay(myServiceImpl);
 	}
@@ -75,8 +132,14 @@ public class MyServiceImplMockTest {
 	@Test
 	public void myServiceImplTest() throws Exception {
 
-		myServiceImpl.stillNeedsWork(todo);
+		myServiceImpl.complete(todo);
 		
+		assertTrue(todo.getCompleted());
+		
+		/**
+		 * This verifies all the expectations we built
+		 * in our {@link #setUp()} method.
+		 */
 		PowerMock.verifyAll();
 	}
 	
