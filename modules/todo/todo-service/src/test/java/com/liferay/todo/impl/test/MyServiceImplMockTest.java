@@ -1,6 +1,5 @@
 package com.liferay.todo.impl.test;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.api.easymock.PowerMock;
@@ -10,8 +9,6 @@ import static org.easymock.EasyMock.*;
 import static org.junit.Assert.*;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.easymock.IAnswer;
 
 import com.liferay.todo.impl.MyServiceImpl;
 import com.liferay.todo.model.Todo;
@@ -91,12 +88,10 @@ public class MyServiceImplMockTest {
 				/**
 				 * Normally this is used to save the 
 				 * {@link Todo} object.
-				 * For our test, we'll just verify
-				 * it is completed as expected.
+				 * For our test, we'll just return
+				 * what we received.
 				 */
 				Todo todo = (Todo) getCurrentArguments()[0];
-				
-				assertTrue(todo.getCompleted());
 				
 				return todo;
 	
@@ -128,13 +123,27 @@ public class MyServiceImplMockTest {
 		
 		replay(myServiceImpl);
 	}
-	
+
 	@Test
-	public void myServiceImplTest() throws Exception {
+	public void testCompletion() throws Exception {
 
 		myServiceImpl.complete(todo);
 		
 		assertTrue(todo.getCompleted());
+		
+		/**
+		 * This verifies all the expectations we built
+		 * in our {@link #setUp()} method.
+		 */
+		PowerMock.verifyAll();
+	}
+	
+	@Test
+	public void testNeedsWork() throws Exception {
+
+		myServiceImpl.stillNeedsWork(todo);
+		
+		assertFalse(todo.getCompleted());
 		
 		/**
 		 * This verifies all the expectations we built
